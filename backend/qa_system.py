@@ -17,6 +17,9 @@ class QASystem:
     def generate_answer(self, question: str, image_base64: Optional[str] = None) -> Dict[str, Any]:
         """Generate answer for a student question"""
         try:
+            # Import vector_store dynamically to avoid circular imports
+            from vector_store import vector_store
+            
             # Step 1: Search for relevant context
             relevant_docs = vector_store.search(question, n_results=5)
             
