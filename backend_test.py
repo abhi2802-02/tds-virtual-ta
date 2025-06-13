@@ -1,7 +1,6 @@
-import requests
 import json
 import base64
-import unittest
+import subprocess
 import sys
 from datetime import datetime
 
@@ -14,29 +13,40 @@ class TDSVirtualAssistantAPITester:
         self.test_results = []
 
     def run_test(self, name, method, endpoint, expected_status, data=None, validate_func=None):
-        """Run a single API test"""
+        """Run a single API test using curl"""
         url = f"{self.api_url}/{endpoint}".rstrip('/')
-        headers = {'Content-Type': 'application/json'}
         
         self.tests_run += 1
         print(f"\n🔍 Testing {name}...")
         
         try:
+            # Build curl command
             if method == 'GET':
-                response = requests.get(url, headers=headers)
+                cmd = ['curl', '-s', '-w', '%{http_code}', url]
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=headers)
+                cmd = ['curl', '-s', '-w', '%{http_code}', '-X', 'POST', 
+                       '-H', 'Content-Type: application/json', 
+                       '-d', json.dumps(data), 
+                       url]
             else:
                 raise ValueError(f"Unsupported method: {method}")
-
-            status_success = response.status_code == expected_status
+            
+            # Execute curl command
+            result = subprocess.run(cmd, capture_output=True, text=True)
+            
+            # Extract status code from the last line
+            output = result.stdout
+            status_code = int(output[-3:])  # Last 3 characters should be status code
+            response_body = output[:-3]  # Everything except the last 3 characters
+            
+            status_success = status_code == expected_status
             
             # Try to parse JSON response
             try:
-                response_data = response.json()
+                response_data = json.loads(response_body)
                 json_success = True
             except json.JSONDecodeError:
-                response_data = response.text
+                response_data = response_body
                 json_success = False
             
             # Run custom validation if provided
@@ -49,11 +59,11 @@ class TDSVirtualAssistantAPITester:
             
             if success:
                 self.tests_passed += 1
-                print(f"✅ Passed - Status: {response.status_code}")
+                print(f"✅ Passed - Status: {status_code}")
                 if validation_message:
                     print(f"   {validation_message}")
             else:
-                print(f"❌ Failed - Expected status {expected_status}, got {response.status_code}")
+                print(f"❌ Failed - Expected status {expected_status}, got {status_code}")
                 if not validation_success:
                     print(f"   Validation failed: {validation_message}")
             
@@ -61,7 +71,7 @@ class TDSVirtualAssistantAPITester:
             self.test_results.append({
                 "name": name,
                 "success": success,
-                "status_code": response.status_code,
+                "status_code": status_code,
                 "expected_status": expected_status,
                 "response": response_data,
                 "validation_message": validation_message if not validation_success else ""
