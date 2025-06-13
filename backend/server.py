@@ -12,9 +12,9 @@ from datetime import datetime
 import base64
 
 # Import our custom modules
-from scraper import scrape_all_data
-from vector_store import vector_store
-from qa_system import qa_system
+from .scraper import scrape_all_data
+from .vector_store import vector_store
+from .qa_system import qa_system
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
