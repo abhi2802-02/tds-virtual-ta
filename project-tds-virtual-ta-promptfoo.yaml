@@ -1,0 +1,125 @@
+description: 'TDS Virtual Teaching Assistant Evaluation'
+
+providers:
+  - id: tds-api
+    type: http
+    config:
+      url: 'https://0611d488-7360-4f0e-9013-4cdc03adf146.preview.emergentagent.com/api/'
+      method: POST
+      headers:
+        Content-Type: application/json
+      body:
+        question: '{{prompt}}'
+
+prompts:
+  - 'Should I use gpt-4o-mini which AI proxy supports, or gpt3.5 turbo?'
+  - 'What Python libraries are covered in the TDS course?'
+  - 'How do I handle machine learning models in assignments?'
+  - 'What are the key topics in Tools in Data Science?'
+  - 'Can you explain the difference between supervised and unsupervised learning?'
+  - 'How do I use pandas for data manipulation?'
+  - 'What is the recommended approach for model evaluation?'
+  - 'How should I implement cross-validation in my assignment?'
+  - 'What are the best practices for data preprocessing?'
+  - 'How do I choose the right machine learning algorithm for my dataset?'
+
+tests:
+  - vars:
+      prompt: 'Should I use gpt-4o-mini which AI proxy supports, or gpt3.5 turbo?'
+    assert:
+      - type: contains
+        value: 'gpt'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+        
+  - vars:
+      prompt: 'What Python libraries are covered in the TDS course?'
+    assert:
+      - type: contains
+        value: 'Python'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+        
+  - vars:
+      prompt: 'How do I handle machine learning models in assignments?'
+    assert:
+      - type: contains
+        value: 'machine learning'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'What are the key topics in Tools in Data Science?'
+    assert:
+      - type: contains
+        value: 'data'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'Can you explain the difference between supervised and unsupervised learning?'
+    assert:
+      - type: contains
+        value: 'learning'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'How do I use pandas for data manipulation?'
+    assert:
+      - type: contains
+        value: 'pandas'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'What is the recommended approach for model evaluation?'
+    assert:
+      - type: contains
+        value: 'evaluation'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'How should I implement cross-validation in my assignment?'
+    assert:
+      - type: contains
+        value: 'validation'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'What are the best practices for data preprocessing?'
+    assert:
+      - type: contains
+        value: 'data'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
+
+  - vars:
+      prompt: 'How do I choose the right machine learning algorithm for my dataset?'
+    assert:
+      - type: contains
+        value: 'algorithm'
+      - type: javascript
+        value: 'typeof output.answer === "string" && output.answer.length > 10'
+      - type: javascript
+        value: 'Array.isArray(output.links)'
