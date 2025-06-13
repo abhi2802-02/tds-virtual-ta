@@ -301,14 +301,24 @@ Please provide a helpful and accurate answer based on the above information."""
             {"role": "user", "content": user_prompt}
         ]
         
-        response = openai_client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.7,
-            max_tokens=800
-        )
-        
-        answer_text = response.choices[0].message.content.strip()
+        try:
+            response = openai_client.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=800
+            )
+            
+            answer_text = response.choices[0].message.content.strip()
+        except Exception as openai_error:
+            logger.warning(f"OpenAI API error: {openai_error}")
+            # Fallback response based on retrieved context
+            if relevant_docs:
+                # Use the most relevant document as fallback
+                best_doc = relevant_docs[0]
+                answer_text = f"Based on the course materials, here's what I found: {best_doc['content'][:500]}..."
+            else:
+                answer_text = "I found some relevant information but couldn't generate a complete response. Please check the course materials linked below."
         
         # Step 6: Extract links from relevant documents
         links = []
