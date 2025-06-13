@@ -11,10 +11,17 @@ import uuid
 from datetime import datetime
 import base64
 
+import sys
+from pathlib import Path
+
+# Add backend directory to Python path
+backend_dir = Path(__file__).parent
+sys.path.insert(0, str(backend_dir))
+
 # Import our custom modules
-from .scraper import scrape_all_data
-from .vector_store import vector_store
-from .qa_system import qa_system
+from scraper import scrape_all_data
+from vector_store import vector_store
+from qa_system import qa_system
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
